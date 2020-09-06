@@ -3,8 +3,8 @@ import bz2
 import mwparserfromhell as mw
 import xml.etree.cElementTree as etree
 from langumo.building import Parser
-from langumo.utils import AuxiliaryFile, SentenceSplitter
-from typing import Iterable, Union, List
+from langumo.utils import AuxiliaryFile
+from typing import Iterable, Union
 
 
 class WikipediaParser(Parser):
@@ -12,22 +12,12 @@ class WikipediaParser(Parser):
     single_quotes_pattern = re.compile('[\x60\xb4\u2018\u2019]')
     double_quotes_pattern = re.compile('[\u201c\u201d]')
 
-    def __init__(self, min_len: int, max_len: int):
-        self.splitter = None
+    def __init__(self):
         self.namespaces = []
-        self.min_len = min_len
-        self.max_len = max_len
 
     def prepare(self, raw: AuxiliaryFile):
         with bz2.open(raw.name, 'r') as fp:
             context = etree.iterparse(fp, events=('start', 'end'))
-
-            # Find a language code of wikipedia dump file.
-            _, root = next(context)
-            for name, value in root.items():
-                if name.endswith('lang'):
-                    self.splitter = SentenceSplitter(value)
-                    break
 
             # Collect namespaces from the dump file.
             for event, elem in context:
@@ -69,7 +59,7 @@ class WikipediaParser(Parser):
 
                 yield article
 
-    def _clean_mediawiki_text(self, text: str) -> List[str]:
+    def _clean_mediawiki_text(self, text: str) -> str:
         # Parse mediawiki code by using `mwparserfromhell` and create
         # namespace-based wiki-link pattern.
         wiki = mw.parse(text)
@@ -137,18 +127,6 @@ class WikipediaParser(Parser):
                 line = WikipediaParser.single_quotes_pattern.sub('\'', line)
                 line = WikipediaParser.double_quotes_pattern.sub('"', line)
 
-                filtered += self.splitter.tokenize(line)
+                filtered.append(line)
 
-        # Merge the splitted sentences to have normalized lengths.
-        groups = [[]]
-        for text in filtered:
-            text = text.strip()
-            if sum(len(s) for s in groups[-1]) + len(text) > self.max_len:
-                groups.append([])
-            groups[-1].append(text)
-
-        groups = [' '.join(sentences) for sentences in groups]
-        groups = [sentences for sentences in groups
-                  if len(sentences) > self.min_len]
-
-        return groups
+        return '\n'.join(filtered)

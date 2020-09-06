@@ -2,7 +2,7 @@ from multiprocessing import Process, Queue
 from langumo.building import Builder
 from langumo.utils import (AuxiliaryFile, AuxiliaryFileManager, colorful,
                            SentenceSplitter)
-from typing import Union, Iterable
+from typing import Iterable
 
 
 class Parser:

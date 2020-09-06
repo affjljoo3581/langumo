@@ -1,6 +1,7 @@
 from multiprocessing import Process, Queue
 from langumo.building import Builder
-from langumo.utils import AuxiliaryFile, AuxiliaryFileManager, colorful
+from langumo.utils import (AuxiliaryFile, AuxiliaryFileManager, colorful,
+                           SentenceSplitter)
 from typing import Union, Iterable
 
 
@@ -12,7 +13,7 @@ class Parser:
         raise NotImplementedError('this method must be implemented by '
                                   'inheritor.')
 
-    def parse(self, text: str) -> Union[str, Iterable[str]]:
+    def parse(self, text: str) -> str:
         raise NotImplementedError('this method must be implemented by '
                                   'inheritor.')
 
@@ -20,26 +21,53 @@ class Parser:
 class ParseRawFile(Builder):
     def __init__(self,
                  parser: Parser,
+                 lang: str,
+                 min_len: int,
+                 max_len: int,
+                 newline: str = '[NEWLINE]',
                  num_workers: int = 1):
         self.parser = parser
+        self.lang = lang
+        self.min_len = min_len
+        self.max_len = max_len
+        self.newline = newline
         self.num_workers = num_workers
 
     def _parse_worker(self, from_queue: Queue, to_queue: Queue):
+        splitter = SentenceSplitter(self.lang)
+
         while True:
-            # Get raw-formatted document text from main process.
+            # Get raw-formatted document from main process.
             document = from_queue.get()
             if document is None:
                 to_queue.put(None)
                 break
 
-            # Parse and clean the raw-formatted document text to plain text.
+            # Parse the document to the plain text.
             parsed = self.parser.parse(document)
-            if isinstance(parsed, str):
-                parsed = [parsed]
 
-            # Return the parsed text to main process.
-            for p in parsed:
-                to_queue.put(p)
+            # Divide the document into sequences with required length.
+            group_sentences = []
+            for paragraph in parsed.splitlines():
+                for sentence in splitter.tokenize(paragraph):
+                    group_sentences.append(sentence)
+
+                    if sum(len(s) for s in group_sentences) > self.max_len:
+                        to_queue.put(' '.join(group_sentences))
+                        group_sentences.clear()
+
+                # Use custom line-break token instead of `\n` which is used for
+                # separating sequences.
+                if group_sentences:
+                    group_sentences.append(self.newline)
+
+            # Use the remainder in dataset if its length is suitable.
+            if group_sentences and group_sentences[-1] == self.newline:
+                group_sentences = group_sentences[:-1]
+
+            text = ' '.join(group_sentences)
+            if len(text) > self.min_len and len(text) < self.max_len:
+                to_queue.put(text)
 
     def _collect_worker(self, parsed: AuxiliaryFile, to_queue: Queue):
         terminated = 0

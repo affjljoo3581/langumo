@@ -7,7 +7,8 @@ class MergeFiles(Builder):
               ) -> AuxiliaryFile:
         merged = afm.create()
 
-        print(colorful.render(f'<r>[*]</r> merge <g>{len(inputs)}</g> files'))
+        print(colorful.render(f'<r>[*]</r> merge <m>{len(inputs)}</m> files '
+                              f'into one'))
         with merged.open('wb') as dst, \
                 AuxiliaryFile.opens(inputs, 'rb') as srcs:
             for src in srcs:

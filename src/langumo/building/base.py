@@ -20,7 +20,7 @@ class BuildPipeline(Builder):
               *inputs: AuxiliaryFile
               ) -> Union[None, AuxiliaryFile, Tuple[AuxiliaryFile, ...]]:
         with afm.auxiliary_scope():
-            outputs = tuple()
+            outputs = inputs
             for builder in self.builders:
                 outputs = builder.build(afm, *outputs)
 

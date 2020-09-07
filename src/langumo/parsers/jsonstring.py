@@ -25,6 +25,7 @@ class EscapedJSONStringParser(Parser):
             if not line:
                 continue
 
+            # Remove duplicated spaces.
             line = line.replace('\n', ' ').replace('\t', ' ')
             while '  ' in line:
                 line = line.replace('  ', ' ')

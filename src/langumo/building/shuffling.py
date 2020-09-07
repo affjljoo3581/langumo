@@ -53,8 +53,7 @@ class ShuffleLines(Builder):
             # Create tqdm progress bar with colorful description.
             tqdm_iter = tqdm.tqdm(
                 offsets,
-                desc=colorful.render('<r>[*]<r/> shuffle '
-                                     '<b>raw corpus file</b>'))
+                desc=colorful.render('<r>[*]</r> shuffle raw corpus file'))
 
             for offset in tqdm_iter:
                 src.seek(offset)

@@ -98,7 +98,8 @@ class ParseRawFile(Builder):
                             daemon=True)
 
         # Start the processes.
-        print(colorful.render('<r>[*]</r> parse raw-formatted corpus file'))
+        print(colorful.render(f'<r>[*]</r> parse raw-formatted corpus file '
+                              f'with <g>{self.parser.__class__.__name__}</g>'))
 
         for p in parsers:
             p.start()

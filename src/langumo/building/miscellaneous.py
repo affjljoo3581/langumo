@@ -17,7 +17,7 @@ class ImportFrom(Builder):
         # be removed. Namely, the manager does not have the ownership of them.
         files = []
         for path in self.paths:
-            print(colorful.render(f'<r>[*]</r> import a file from '
+            print(colorful.render(f'<r>[*]</r> import file from '
                                   f'<b>{path}</b>'))
             files.append(AuxiliaryFile(path))
         return tuple(files)
@@ -40,7 +40,7 @@ class ExportTo(Builder):
             if parent != '' and not os.path.exists(parent):
                 os.makedirs(parent, exist_ok=True)
 
-            print(colorful.render(f'<r>[*]</r> export a file to '
+            print(colorful.render(f'<r>[*]</r> export the processed file to '
                                   f'<b>{path}</b>'))
             shutil.copyfile(af.name, path)
 

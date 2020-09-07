@@ -4,7 +4,7 @@ import mwparserfromhell as mw
 import xml.etree.cElementTree as etree
 from langumo.building import Parser
 from langumo.utils import AuxiliaryFile
-from typing import Iterable, Union
+from typing import Iterable
 
 
 class WikipediaParser(Parser):
@@ -103,7 +103,7 @@ class WikipediaParser(Parser):
 
         return section_text
 
-    def parse(self, text: str) -> Union[str, Iterable[str]]:
+    def parse(self, text: str) -> str:
         section_text = self._clean_mediawiki_text(text)
 
         # Post-process parsed wikipedia article contents.

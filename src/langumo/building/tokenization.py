@@ -111,7 +111,8 @@ class TokenizeSentences(Builder):
             # Create tqdm progress bar with colorful description.
             tqdm_iter = tqdm.tqdm(
                 src,
-                desc=colorful.render('<r>[*]</r> tokenize sentences'),
+                desc=colorful.render('<r>[*]</r> tokenize sentences with '
+                                     '<g>WordPiece</g> model'),
                 total=total_lines)
 
             batch_lines = []

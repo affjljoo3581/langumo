@@ -1,4 +1,5 @@
 import pytest
+import tempfile
 from langumo.building import Builder, BuildPipeline
 
 
@@ -45,29 +46,32 @@ class assert_input_files(Builder):
 
 
 def test_build_pipeline_catches_wrong_types():
-    BuildPipeline(return_none()).run('tmp')
-    BuildPipeline(return_single_file()).run('tmp')
-    BuildPipeline(return_multiple_files()).run('tmp')
-    BuildPipeline(return_multiple_files_in_tuple()).run('tmp')
+    with tempfile.TemporaryDirectory() as tdir:
+        BuildPipeline(return_none()).run(f'{tdir}/tmp')
+        BuildPipeline(return_single_file()).run(f'{tdir}/tmp')
+        BuildPipeline(return_multiple_files()).run(f'{tdir}/tmp')
+        BuildPipeline(return_multiple_files_in_tuple()).run(f'{tdir}/tmp')
 
-    with pytest.raises(TypeError):
-        BuildPipeline(return_integer()).run('tmp')
-    with pytest.raises(TypeError):
-        BuildPipeline(return_multiple_files_with_integer()).run('tmp')
+        with pytest.raises(TypeError):
+            BuildPipeline(return_integer()).run(f'{tdir}/tmp')
+        with pytest.raises(TypeError):
+            BuildPipeline(return_multiple_files_with_integer()
+                          ).run(f'{tdir}/tmp')
 
 
 def test_build_pipeline_passes_output_files_correctly():
-    BuildPipeline(
-        return_single_file(),
-        assert_input_files(1)
-    ).run('tmp')
+    with tempfile.TemporaryDirectory() as tdir:
+        BuildPipeline(
+            return_single_file(),
+            assert_input_files(1)
+        ).run(f'{tdir}/tmp')
 
-    BuildPipeline(
-        return_multiple_files(),
-        assert_input_files(3)
-    ).run('tmp')
+        BuildPipeline(
+            return_multiple_files(),
+            assert_input_files(3)
+        ).run(f'{tdir}/tmp')
 
-    BuildPipeline(
-        return_multiple_files_in_tuple(),
-        assert_input_files(10)
-    ).run('tmp')
+        BuildPipeline(
+            return_multiple_files_in_tuple(),
+            assert_input_files(10)
+        ).run(f'{tdir}/tmp')

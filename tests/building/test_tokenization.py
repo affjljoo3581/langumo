@@ -1,3 +1,4 @@
+import tempfile
 from langumo.building import TrainTokenizer, TokenizeSentences
 from langumo.utils import AuxiliaryFileManager
 
@@ -42,7 +43,8 @@ _dummy_corpus_content = (
 
 
 def test_subset_file_creation():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             fp.write('hello world!\n' * 100)
@@ -64,7 +66,8 @@ def test_subset_file_creation():
 
 
 def test_training_wordpiece_tokenizer():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             fp.write(_dummy_corpus_content)
@@ -86,7 +89,8 @@ def test_training_wordpiece_tokenizer():
 
 
 def test_subword_tokenization():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             fp.write(_dummy_corpus_content)

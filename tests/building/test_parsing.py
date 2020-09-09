@@ -1,6 +1,7 @@
+import tempfile
 from langumo.building import Parser, ParseRawFile
-from langumo.utils import AuxiliaryFile, AuxiliaryFileManager, SentenceSplitter
-from typing import Union, Iterable
+from langumo.utils import AuxiliaryFile, AuxiliaryFileManager
+from typing import Iterable
 
 
 _dummy_corpus_content = (
@@ -53,7 +54,8 @@ class simple_parser(Parser):
 
 
 def test_formatted_file_parsing():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             fp.write(_dummy_corpus_content)

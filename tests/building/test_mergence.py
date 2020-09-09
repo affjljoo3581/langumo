@@ -1,9 +1,11 @@
+import tempfile
 from langumo.building import MergeFiles
 from langumo.utils import AuxiliaryFile, AuxiliaryFileManager
 
 
 def test_merging_files_without_loss_of_contents():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         files = [afm.create() for _ in range(10)]
         with AuxiliaryFile.opens(files, 'w') as fps:
             for i, fp in enumerate(fps):
@@ -15,7 +17,8 @@ def test_merging_files_without_loss_of_contents():
 
 
 def test_if_builder_adds_break_lines_automatically():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         files = [afm.create() for _ in range(10)]
         with AuxiliaryFile.opens(files, 'w') as fps:
             for i, fp in enumerate(fps):

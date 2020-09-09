@@ -1,9 +1,11 @@
+import tempfile
 from langumo.building import ShuffleLines
 from langumo.utils import AuxiliaryFileManager
 
 
 def test_counting_lines_in_file():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         builder = ShuffleLines()
         corpus = afm.create()
 
@@ -24,7 +26,8 @@ def test_counting_lines_in_file():
 
 
 def test_builder_collects_seeking_positions_correctly():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         # Create an auxiliary file with 1000 dummy lines.
         corpus = afm.create()
         with corpus.open('w') as fp:
@@ -36,7 +39,8 @@ def test_builder_collects_seeking_positions_correctly():
 
 
 def test_shuffling_preserves_contents():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             fp.write('\n'.join([str(i) for i in range(1000)]) + '\n')
@@ -70,7 +74,8 @@ def test_shuffling_preserves_contents():
 
 
 def test_shuffling_without_break_line_in_last():
-    with AuxiliaryFileManager('tmp') as afm:
+    with tempfile.TemporaryDirectory() as tdir, \
+            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             # Note that we would not add break-line character to the end of the

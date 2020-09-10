@@ -23,7 +23,7 @@ _default_configuration = {
         'tokenization': {
             'subset-size': 1000000000,
             'vocab-size': 32000,
-            'limit-alphabet': 6000,
+            'limit-alphabet': 1000,
             'unk-token': '[UNK]',
             'special-tokens': ['[START]', '[END]', '[PAD]', '[NEWLINE]']
         }

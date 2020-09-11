@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest pytest-cov
         python setup.py install
+        curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
     
     - name: Lint with flake8
       run: |
@@ -40,3 +41,8 @@ jobs:
         file: ./coverage.xml
         name: codecov-umbrella
         fail_ci_if_error: true
+
+    - name: Integrate FOSSA tracing
+      run: |
+        python -c "from distutils.core import run_setup; print('\n'.join(run_setup('./setup.py', stop_after='init').install_requires))" > requirements.txt
+        fossa

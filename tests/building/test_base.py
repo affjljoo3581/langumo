@@ -50,7 +50,8 @@ def test_build_pipeline_catches_wrong_types():
         BuildPipeline(return_none()).run(f'{tdir}/workspace')
         BuildPipeline(return_single_file()).run(f'{tdir}/workspace')
         BuildPipeline(return_multiple_files()).run(f'{tdir}/workspace')
-        BuildPipeline(return_multiple_files_in_tuple()).run(f'{tdir}/workspace')
+        BuildPipeline(return_multiple_files_in_tuple()
+                      ).run(f'{tdir}/workspace')
 
         with pytest.raises(TypeError):
             BuildPipeline(return_integer()).run(f'{tdir}/workspace')

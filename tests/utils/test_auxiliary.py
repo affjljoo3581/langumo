@@ -82,7 +82,8 @@ def test_afm_handles_files_separately_by_level():
                     # Create auxiliary files in level 2.
                     for _ in range(5):
                         afm.create()
-                    assert _number_of_files_in_directory(f'{tdir}/workspace') == 20
+                    assert (_number_of_files_in_directory(f'{tdir}/workspace')
+                            == 20)
 
                 # Not only non-locked files but also sub-level auxiliary files
                 # would be removed.

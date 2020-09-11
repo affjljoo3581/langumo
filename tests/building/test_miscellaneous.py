@@ -57,17 +57,17 @@ def test_importing_files_from_external():
         BuildPipeline(
             ImportFrom(f'{tdir}/0.txt'),
             assert_input_files('0')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             ImportFrom(f'{tdir}/0.txt', f'{tdir}/1.txt'),
             assert_input_files('0', '1')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             ImportFrom(*(f'{tdir}/{i}.txt' for i in range(10))),
             assert_input_files(*(str(i) for i in range(10)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
 
 def test_if_imported_files_are_not_removed():
@@ -83,13 +83,13 @@ def test_if_imported_files_are_not_removed():
             # and not returned by the builder would be removed.
             return_none(),
             assert_file_existence(f'{tdir}/0.txt')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             ImportFrom(*(f'{tdir}/{i}.txt' for i in range(10))),
             return_none(),
             assert_file_existence(*(f'{tdir}/{i}.txt' for i in range(10)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
 
 def test_exporting_files_to_external():
@@ -99,7 +99,7 @@ def test_exporting_files_to_external():
             create_new_file('hello world!'),
             ExportTo(f'{tdir}/output.txt'),
             assert_input_files('hello world!')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         assert os.path.exists(f'{tdir}/output.txt')
         with open(f'{tdir}/output.txt', 'r') as fp:
@@ -110,7 +110,7 @@ def test_exporting_files_to_external():
             create_new_file(*(str(i) for i in range(10))),
             ExportTo(*(f'{tdir}/{i}.txt' for i in range(10))),
             assert_input_files(*(str(i) for i in range(10)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         for i in range(10):
             assert os.path.exists(f'{tdir}/{i}.txt')
@@ -124,7 +124,7 @@ def test_builder_creates_subdirectories_in_exporting():
             create_new_file('hello world!', '!dlrow olleh'),
             ExportTo(f'{tdir}/build/out1/tmp.txt',
                      f'{tdir}/build/out2/tmp.txt')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         assert os.path.exists(f'{tdir}/build/out1/tmp.txt')
         assert os.path.exists(f'{tdir}/build/out2/tmp.txt')
@@ -144,7 +144,7 @@ def test_residual_builder_concatenates_inputs_and_outputs():
                 create_new_file('hello world!')
             ),
             assert_input_files('hello', 'world!', 'hello world!')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         # Test for complex pipelines.
         BuildPipeline(
@@ -156,7 +156,7 @@ def test_residual_builder_concatenates_inputs_and_outputs():
             ),
             assert_input_files('hello', 'world!', 'hello world!',
                                '!dlrow olleh')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             create_new_file('hello', 'world!'),
@@ -172,7 +172,7 @@ def test_residual_builder_concatenates_inputs_and_outputs():
             ),
             assert_input_files('hello', 'world!', 'hello world!',
                                '!dlrow olleh', 'world! hello')
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
 
 def test_stacking_builder_stacks_outputs_correctly():
@@ -182,14 +182,14 @@ def test_stacking_builder_stacks_outputs_correctly():
             StackOutputs(create_new_file(str(i)) for i in range(10)),
             do_nothing(),
             assert_input_files(*(str(i) for i in range(10)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             do_nothing(),
             StackOutputs((create_new_file(str(i)),) for i in range(10)),
             do_nothing(),
             assert_input_files(*(str(i) for i in range(10)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             do_nothing(),
@@ -199,7 +199,7 @@ def test_stacking_builder_stacks_outputs_correctly():
             ) for i in range(10)),
             do_nothing(),
             assert_input_files(*(str(i) for i in range(10)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')
 
         BuildPipeline(
             do_nothing(),
@@ -212,4 +212,4 @@ def test_stacking_builder_stacks_outputs_correctly():
             do_nothing(),
             assert_input_files(*(str(i) * j
                                  for i in range(10) for j in range(1, 3)))
-        ).run(f'{tdir}/tmp')
+        ).run(f'{tdir}/workspace')

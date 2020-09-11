@@ -55,7 +55,7 @@ class simple_parser(Parser):
 
 def test_formatted_file_parsing():
     with tempfile.TemporaryDirectory() as tdir, \
-            AuxiliaryFileManager(f'{tdir}/tmp') as afm:
+            AuxiliaryFileManager(f'{tdir}/workspace') as afm:
         corpus = afm.create()
         with corpus.open('w') as fp:
             fp.write(_dummy_corpus_content)

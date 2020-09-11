@@ -1,6 +1,11 @@
 # langumo
 **The unified corpus building environment for Language Models.**
 
+![GitHub](https://img.shields.io/github/license/affjljoo3581/langumo)
+[![codecov](https://codecov.io/gh/affjljoo3581/langumo/branch/master/graph/badge.svg)](https://codecov.io/gh/affjljoo3581/langumo)
+[![CodeFactor](https://www.codefactor.io/repository/github/affjljoo3581/langumo/badge)](https://www.codefactor.io/repository/github/affjljoo3581/langumo)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/9e9be907acaf473397cb1b25ab404c77)](https://www.codacy.com/manual/affjljoo3581/langumo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=affjljoo3581/langumo&amp;utm_campaign=Badge_Grade)
+
 ## Table of contents
 * Introduction
 * Main features

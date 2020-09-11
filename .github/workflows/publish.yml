@@ -17,7 +17,7 @@ jobs:
         python-version: '3.7'
     
     - name: Install dependencies
-      runs: |
+      run: |
         python -m pip install --upgrade pip
         pip install setuptools wheel twine
     
@@ -25,6 +25,6 @@ jobs:
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      runs: |
+      run: |
         python setup.py sdist bdist_wheel
         twine upload dist/*

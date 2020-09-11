@@ -5,6 +5,7 @@
 [![codecov](https://codecov.io/gh/affjljoo3581/langumo/branch/master/graph/badge.svg)](https://codecov.io/gh/affjljoo3581/langumo)
 [![CodeFactor](https://www.codefactor.io/repository/github/affjljoo3581/langumo/badge)](https://www.codefactor.io/repository/github/affjljoo3581/langumo)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/9e9be907acaf473397cb1b25ab404c77)](https://www.codacy.com/manual/affjljoo3581/langumo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=affjljoo3581/langumo&amp;utm_campaign=Badge_Grade)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Faffjljoo3581%2Flangumo.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Faffjljoo3581%2Flangumo?ref=badge_shield)
 
 ## Table of contents
 * Introduction
@@ -324,3 +325,5 @@ handles the newline-separated contents escaped by
 
 ## License
 `langumo` is [Apache-2.0 Licensed](./LICENSE).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Faffjljoo3581%2Flangumo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Faffjljoo3581%2Flangumo?ref=badge_large)

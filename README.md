@@ -108,7 +108,7 @@ $ langumo
 ```
 
 Then you can see the below outputs:
-```console
+```
 [*] import file from src/enwiki-20200901-pages-articles1.xml-p1p30303.bz2
 [*] parse raw-formatted corpus file with WikipediaParser
 [*] merge 1 files into one
@@ -212,7 +212,7 @@ langumo:
 ## Usage
 
 ### Command-line usage
-```console
+```
 usage: langumo [-h] [config]
 
 The unified corpus building environment for Language Models.

@@ -122,7 +122,6 @@ Then you can see the below outputs:
 [*] split validation corpus - 23609  of 236084 lines
 [*] export the processed file to build/corpus.train.txt
 [*] export the processed file to build/corpus.eval.txt
-
 ```
 
 After building the dataset, the workspace directory would contain the below files:

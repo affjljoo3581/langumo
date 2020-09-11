@@ -47,4 +47,4 @@ jobs:
         FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
       run: |
         python -c "from distutils.core import run_setup; print('\n'.join(run_setup('./setup.py', stop_after='init').install_requires))" > requirements.txt
-        fossa
+        fossa -p langumo

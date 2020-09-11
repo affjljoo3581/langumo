@@ -112,16 +112,17 @@ Then you can see the below outputs:
 [*] import file from src/enwiki-20200901-pages-articles1.xml-p1p30303.bz2
 [*] parse raw-formatted corpus file with WikipediaParser
 [*] merge 1 files into one
-[*] shuffle raw corpus file: 100%|████████████████████| 118042/118042 [00:01<00:00, 96965.15it/s]
-[00:00:10] Reading files (256 Mo)                   █████████████████████████                 100
-[00:00:00] Tokenize words                           █████████████████████████ 418863   /   418863
-[00:00:01] Count pairs                              █████████████████████████ 418863   /   418863
-[00:00:02] Compute merges                           █████████████████████████ 28942    /    28942
+[*] shuffle raw corpus file: 100%|█████████████████████████████████| 118042/118042 [00:01<00:00, 96965.15it/s]
+[00:00:10] Reading files (256 Mo)                   ██████████████████████████████████████                 100
+[00:00:00] Tokenize words                           ██████████████████████████████████████ 418863   /   418863
+[00:00:01] Count pairs                              ██████████████████████████████████████ 418863   /   418863
+[00:00:02] Compute merges                           ██████████████████████████████████████ 28942    /    28942
 [*] export the processed file to build/vocab.txt
-[*] tokenize sentences with WordPiece model: 100%|█████| 236084/236084 [00:23<00:00, 9846.67it/s]
+[*] tokenize sentences with WordPiece model: 100%|██████████████████| 236084/236084 [00:23<00:00, 9846.67it/s]
 [*] split validation corpus - 23609  of 236084 lines
 [*] export the processed file to build/corpus.train.txt
 [*] export the processed file to build/corpus.eval.txt
+
 ```
 
 After building the dataset, the workspace directory would contain the below files:

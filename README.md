@@ -2,7 +2,10 @@
 **The unified corpus building environment for Language Models.**
 
 ![build](https://github.com/affjljoo3581/langumo/workflows/build/badge.svg)
-![GitHub](https://img.shields.io/github/license/affjljoo3581/langumo)
+![PyPI](https://img.shields.io/pypi/v/langumo)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/langumo)
+![PyPI - Format](https://img.shields.io/pypi/format/langumo)<br/>
+![GitHub](https://img.shields.io/github/license/affjljoo3581/langumo?color=blue)
 [![FOSSA Status](https://app.fossa.com/api/projects/custom%2B20034%2Flangumo.svg?type=shield)](https://app.fossa.com/projects/custom%2B20034%2Flangumo?ref=badge_shield)
 [![codecov](https://codecov.io/gh/affjljoo3581/langumo/branch/master/graph/badge.svg)](https://codecov.io/gh/affjljoo3581/langumo)
 [![CodeFactor](https://www.codefactor.io/repository/github/affjljoo3581/langumo/badge)](https://www.codefactor.io/repository/github/affjljoo3581/langumo)

@@ -27,15 +27,13 @@ class ParseRawFile(Builder):
                  newline: str = '[NEWLINE]',
                  num_workers: int = 1):
         self.parser = parser
-        self.lang = lang
         self.min_len = min_len
         self.max_len = max_len
         self.newline = newline
         self.num_workers = num_workers
+        self.splitter = SentenceSplitter(lang)
 
     def _parse_worker(self, from_queue: Queue, to_queue: Queue):
-        splitter = SentenceSplitter(self.lang)
-
         while True:
             # Get raw-formatted document from main process.
             document = from_queue.get()
@@ -49,7 +47,7 @@ class ParseRawFile(Builder):
             # Divide the document into sequences with required length.
             group_sentences = []
             for paragraph in parsed.splitlines():
-                for sentence in splitter.tokenize(paragraph):
+                for sentence in self.splitter.tokenize(paragraph):
                     group_sentences.append(sentence)
 
                     if sum(len(s) for s in group_sentences) > self.max_len:

@@ -12,20 +12,20 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/9e9be907acaf473397cb1b25ab404c77)](https://www.codacy.com/manual/affjljoo3581/langumo?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=affjljoo3581/langumo&amp;utm_campaign=Badge_Grade)
 
 ## Table of contents
-* Introduction
-* Main features
-* Dependencies
-* Installation
-    * With pip
-    * From source
-* Quick start guide
-    * Build your first dataset
-    * Write a custom `Parser`
-* Usage
-    * Command-line usage
-    * Details of build configuration
-    * Builtin `Parser`s
-* License
+* [Introduction](#introduction)
+* [Main features](#main-features)
+* [Dependencies](#dependencies)
+* [Installation](#installation)
+    * [With pip](#with-pip)
+    * [From source](#from-source)
+* [Quick start guide](#quick-start-guide)
+    * [Build your first dataset](#build-your-first-dataset)
+    * [Write a custom `Parser`](#write-a-custom-parser)
+* [Usage](#usage)
+    * [Command-line usage](#command-line-usage)
+    * [Details of build configuration](#details-of-build-configuration)
+    * [Builtin `Parser`s](#builtin-parsers)
+* [License](#license)
 
 ## Introduction
 `langumo` is an **unified corpus building environment for Language Models**.

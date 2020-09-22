@@ -306,7 +306,7 @@ Wikipedia articles are written in
 use any version of Wikipedia dump file with this parser. It internally use
 [`mwparserfromhell`](https://github.com/earwig/mwparserfromhell) library.
 
-#### EscapedJSONStringParser (`langumo.parsers.EscapedJSONStringParser`)
+#### EscapedStringParser (`langumo.parsers.EscapedStringParser`)
 In `json` package, there is `encode_basestring` method which escapes texts to
 JSON-style string. For example,
 
@@ -318,14 +318,14 @@ JSON-style string. For example,
 
     Mr. and Mrs. Dursley, of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much.
 
-would be escaped as below:
+is escaped as below:
 
     "Harry Potter and the Sorcerer's Stone \n\nCHAPTER ONE \n\nTHE BOY WHO LIVED \n\nMr. and Mrs. Dursley, of number four, Privet Drive, were proud to say that they were perfectly normal, thank you very much."
 
-As you can see, multi-line content is changed to a single line. This parser
+As you can see, multi-line content is changed to the single line. This parser
 handles the newline-separated contents escaped by
 `json.encoder.encode_basestring`. If you want to use your custom dataset to
-`langumo` build, consider this format.
+`langumo`, consider this format.
 
 ## License
 `langumo` is [Apache-2.0 Licensed](./LICENSE).

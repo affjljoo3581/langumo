@@ -1,2 +1,2 @@
 from langumo.parsers.wikipedia import WikipediaParser
-from langumo.parsers.jsonstring import EscapedJSONStringParser
+from langumo.parsers.jsonstring import EscapedStringParser

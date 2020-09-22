@@ -3,7 +3,7 @@ import shutil
 import random
 import string
 import contextlib
-from typing import IO, List, Container
+from typing import IO, List, Container, ContextManager
 
 
 class AuxiliaryFile:
@@ -20,7 +20,8 @@ class AuxiliaryFile:
 
     @staticmethod
     @contextlib.contextmanager
-    def opens(files: List['AuxiliaryFile'], mode: str = 'r') -> List[IO]:
+    def opens(files: List['AuxiliaryFile'], mode: str = 'r'
+              ) -> ContextManager[List[IO]]:
         files = [f.open(mode) for f in files]
         try:
             yield files

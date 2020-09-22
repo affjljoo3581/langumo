@@ -5,7 +5,7 @@ from langumo.utils import AuxiliaryFile
 from typing import Iterable
 
 
-class EscapedJSONStringParser(Parser):
+class EscapedStringParser(Parser):
     single_quotes_pattern = re.compile('[\x60\xb4\u2018\u2019]')
     double_quotes_pattern = re.compile('[\u201c\u201d]')
 
@@ -32,10 +32,8 @@ class EscapedJSONStringParser(Parser):
 
             # Normalize the quotes by replacing unusual ones to the standard
             # ones.
-            line = (EscapedJSONStringParser
-                    .single_quotes_pattern.sub('\'', line))
-            line = (EscapedJSONStringParser
-                    .double_quotes_pattern.sub('"', line))
+            line = EscapedStringParser.single_quotes_pattern.sub('\'', line)
+            line = EscapedStringParser.double_quotes_pattern.sub('"', line)
 
             filtered.append(line)
 

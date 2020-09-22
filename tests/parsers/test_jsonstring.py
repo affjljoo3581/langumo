@@ -1,5 +1,5 @@
 import os
-from langumo.parsers import EscapedJSONStringParser
+from langumo.parsers import EscapedStringParser
 from langumo.utils import AuxiliaryFile
 
 
@@ -8,7 +8,7 @@ def _get_resource_path(name: str) -> str:
 
 
 def test_json_string_parser_extraction():
-    parser = EscapedJSONStringParser()
+    parser = EscapedStringParser()
 
     # Load a dummy escaped json-string file.
     raw = AuxiliaryFile(_get_resource_path('dummy.jsonstring.txt'))
@@ -22,7 +22,7 @@ def test_json_string_parser_extraction():
 
 
 def test_if_parser_parses_escaped_json_string_well():
-    parser = EscapedJSONStringParser()
+    parser = EscapedStringParser()
 
     # Load a dummy escaped json-string file.
     raw = AuxiliaryFile(_get_resource_path('dummy.jsonstring.txt'))

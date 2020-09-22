@@ -1,6 +1,7 @@
 import os
+import pytest
 import tempfile
-from langumo.building import (Builder, BuildPipeline, ImportFrom, ExportTo,
+from langumo.building import (Builder, Sequential, ImportFrom, ExportTo,
                               Residual, StackOutputs)
 from langumo.utils import AuxiliaryFile
 
@@ -15,6 +16,35 @@ class return_none(Builder):
         return None
 
 
+class return_single_file(Builder):
+    def build(self, afm, *inputs):
+        return afm.create()
+
+
+class return_multiple_files(Builder):
+    def build(self, afm, *inputs):
+        af1 = afm.create()
+        af2 = afm.create()
+        af3 = afm.create()
+
+        return af1, af2, af3
+
+
+class return_multiple_files_in_tuple(Builder):
+    def build(self, afm, *inputs):
+        return tuple(afm.create() for _ in range(10))
+
+
+class return_integer(Builder):
+    def build(self, afm, *inputs):
+        return 0
+
+
+class return_multiple_files_with_integer(Builder):
+    def build(self, afm, *inputs):
+        return tuple(afm.create() for _ in range(10)) + (0,)
+
+
 class create_new_file(Builder):
     def __init__(self, *texts: str):
         self.texts = texts
@@ -27,7 +57,7 @@ class create_new_file(Builder):
         return tuple(files)
 
 
-class assert_input_files(Builder):
+class assert_input_file_contents(Builder):
     def __init__(self, *texts: str):
         self.texts = texts
 
@@ -39,6 +69,14 @@ class assert_input_files(Builder):
                 assert fp.read() == text
 
 
+class assert_input_files_count(Builder):
+    def __init__(self, n: int):
+        self.n = n
+
+    def build(self, afm, *inputs):
+        assert len(inputs) == self.n
+
+
 class assert_file_existence(Builder):
     def __init__(self, *names: str):
         self.names = names
@@ -48,25 +86,57 @@ class assert_file_existence(Builder):
             assert os.path.exists(name)
 
 
+def test_sequential_model_catches_wrong_types():
+    with tempfile.TemporaryDirectory() as tdir:
+        Sequential(return_none()).run(f'{tdir}/workspace')
+        Sequential(return_single_file()).run(f'{tdir}/workspace')
+        Sequential(return_multiple_files()).run(f'{tdir}/workspace')
+        Sequential(return_multiple_files_in_tuple()).run(f'{tdir}/workspace')
+
+        with pytest.raises(TypeError):
+            Sequential(return_integer()).run(f'{tdir}/workspace')
+        with pytest.raises(TypeError):
+            Sequential(return_multiple_files_with_integer()
+                       ).run(f'{tdir}/workspace')
+
+
+def test_sequential_model_passes_output_files_correctly():
+    with tempfile.TemporaryDirectory() as tdir:
+        Sequential(
+            return_single_file(),
+            assert_input_files_count(1)
+        ).run(f'{tdir}/workspace')
+
+        Sequential(
+            return_multiple_files(),
+            assert_input_files_count(3)
+        ).run(f'{tdir}/workspace')
+
+        Sequential(
+            return_multiple_files_in_tuple(),
+            assert_input_files_count(10)
+        ).run(f'{tdir}/workspace')
+
+
 def test_importing_files_from_external():
     with tempfile.TemporaryDirectory() as tdir:
         for i in range(10):
             with open(f'{tdir}/{i}.txt', 'w') as fp:
                 fp.write(str(i))
 
-        BuildPipeline(
+        Sequential(
             ImportFrom(f'{tdir}/0.txt'),
-            assert_input_files('0')
+            assert_input_file_contents('0')
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             ImportFrom(f'{tdir}/0.txt', f'{tdir}/1.txt'),
-            assert_input_files('0', '1')
+            assert_input_file_contents('0', '1')
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             ImportFrom(*(f'{tdir}/{i}.txt' for i in range(10))),
-            assert_input_files(*(str(i) for i in range(10)))
+            assert_input_file_contents(*(str(i) for i in range(10)))
         ).run(f'{tdir}/workspace')
 
 
@@ -76,7 +146,7 @@ def test_if_imported_files_are_not_removed():
             with open(f'{tdir}/{i}.txt', 'w') as fp:
                 fp.write(f'{i}')
 
-        BuildPipeline(
+        Sequential(
             ImportFrom(f'{tdir}/0.txt'),
             # Note that returning nothing may require clearing unused files.
             # Precisely, auxiliary files which are registered to the manager
@@ -85,7 +155,7 @@ def test_if_imported_files_are_not_removed():
             assert_file_existence(f'{tdir}/0.txt')
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             ImportFrom(*(f'{tdir}/{i}.txt' for i in range(10))),
             return_none(),
             assert_file_existence(*(f'{tdir}/{i}.txt' for i in range(10)))
@@ -95,10 +165,10 @@ def test_if_imported_files_are_not_removed():
 def test_exporting_files_to_external():
     with tempfile.TemporaryDirectory() as tdir:
         # Test exporting a single file.
-        BuildPipeline(
+        Sequential(
             create_new_file('hello world!'),
             ExportTo(f'{tdir}/output.txt'),
-            assert_input_files('hello world!')
+            assert_input_file_contents('hello world!')
         ).run(f'{tdir}/workspace')
 
         assert os.path.exists(f'{tdir}/output.txt')
@@ -106,10 +176,10 @@ def test_exporting_files_to_external():
             assert fp.read() == 'hello world!'
 
         # Test exporting multiple files.
-        BuildPipeline(
+        Sequential(
             create_new_file(*(str(i) for i in range(10))),
             ExportTo(*(f'{tdir}/{i}.txt' for i in range(10))),
-            assert_input_files(*(str(i) for i in range(10)))
+            assert_input_file_contents(*(str(i) for i in range(10)))
         ).run(f'{tdir}/workspace')
 
         for i in range(10):
@@ -120,7 +190,7 @@ def test_exporting_files_to_external():
 
 def test_builder_creates_subdirectories_in_exporting():
     with tempfile.TemporaryDirectory() as tdir:
-        BuildPipeline(
+        Sequential(
             create_new_file('hello world!', '!dlrow olleh'),
             ExportTo(f'{tdir}/build/out1/tmp.txt',
                      f'{tdir}/build/out2/tmp.txt')
@@ -138,27 +208,27 @@ def test_builder_creates_subdirectories_in_exporting():
 def test_residual_builder_concatenates_inputs_and_outputs():
     with tempfile.TemporaryDirectory() as tdir:
         # Test for simple pipeline.
-        BuildPipeline(
+        Sequential(
             create_new_file('hello', 'world!'),
             Residual(
                 create_new_file('hello world!')
             ),
-            assert_input_files('hello', 'world!', 'hello world!')
+            assert_input_file_contents('hello', 'world!', 'hello world!')
         ).run(f'{tdir}/workspace')
 
         # Test for complex pipelines.
-        BuildPipeline(
+        Sequential(
             create_new_file('hello', 'world!'),
             Residual(
                 do_nothing(),
                 create_new_file('hello world!', '!dlrow olleh'),
                 do_nothing(),
             ),
-            assert_input_files('hello', 'world!', 'hello world!',
-                               '!dlrow olleh')
+            assert_input_file_contents('hello', 'world!', 'hello world!',
+                                       '!dlrow olleh')
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             create_new_file('hello', 'world!'),
             Residual(
                 do_nothing(),
@@ -170,38 +240,38 @@ def test_residual_builder_concatenates_inputs_and_outputs():
                     do_nothing(),
                 )
             ),
-            assert_input_files('hello', 'world!', 'hello world!',
-                               '!dlrow olleh', 'world! hello')
+            assert_input_file_contents('hello', 'world!', 'hello world!',
+                                       '!dlrow olleh', 'world! hello')
         ).run(f'{tdir}/workspace')
 
 
 def test_stacking_builder_stacks_outputs_correctly():
     with tempfile.TemporaryDirectory() as tdir:
-        BuildPipeline(
+        Sequential(
             do_nothing(),
             StackOutputs(create_new_file(str(i)) for i in range(10)),
             do_nothing(),
-            assert_input_files(*(str(i) for i in range(10)))
+            assert_input_file_contents(*(str(i) for i in range(10)))
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             do_nothing(),
             StackOutputs((create_new_file(str(i)),) for i in range(10)),
             do_nothing(),
-            assert_input_files(*(str(i) for i in range(10)))
+            assert_input_file_contents(*(str(i) for i in range(10)))
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             do_nothing(),
             StackOutputs((
                 create_new_file(str(i)),
                 do_nothing(),
             ) for i in range(10)),
             do_nothing(),
-            assert_input_files(*(str(i) for i in range(10)))
+            assert_input_file_contents(*(str(i) for i in range(10)))
         ).run(f'{tdir}/workspace')
 
-        BuildPipeline(
+        Sequential(
             do_nothing(),
             StackOutputs((
                 do_nothing(),
@@ -210,6 +280,7 @@ def test_stacking_builder_stacks_outputs_correctly():
                 do_nothing(),
             ) for i in range(10)),
             do_nothing(),
-            assert_input_files(*(str(i) * j
-                                 for i in range(10) for j in range(1, 3)))
+            assert_input_file_contents(*(str(i) * j
+                                         for i in range(10)
+                                         for j in range(1, 3)))
         ).run(f'{tdir}/workspace')

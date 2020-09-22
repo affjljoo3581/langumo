@@ -1,8 +1,46 @@
 import os
 import shutil
-from langumo.building import Builder, BuildPipeline
+from langumo.building import Builder
 from langumo.utils import AuxiliaryFile, AuxiliaryFileManager, colorful
 from typing import Union, Tuple, Iterable
+
+
+class Sequential(Builder):
+    def __init__(self, *builders: Builder):
+        self.builders = builders
+
+    def build(self,
+              afm: AuxiliaryFileManager,
+              *inputs: AuxiliaryFile
+              ) -> Union[None, AuxiliaryFile, Tuple[AuxiliaryFile, ...]]:
+        with afm.auxiliary_scope():
+            outputs = inputs
+            for builder in self.builders:
+                outputs = builder.build(afm, *outputs)
+
+                # Lock output auxiliary files to protect from deleting for
+                # passing to next builder.
+                if isinstance(outputs, AuxiliaryFile):
+                    outputs.lock()
+                    outputs = (outputs,)
+                elif isinstance(outputs, tuple):
+                    for af in outputs:
+                        if not isinstance(af, AuxiliaryFile):
+                            raise TypeError(f'element {type(af)} is not an '
+                                            f'auxiliary file.')
+                        af.lock()
+                elif outputs is None:
+                    outputs = tuple()
+                else:
+                    # If the output of builder is not one of the allowed types
+                    # (auxiliary file, tuple of auxiliary files, and None) then
+                    # throw exception.
+                    raise TypeError(f'output type {type(outputs)} from '
+                                    f'builder is not allowed.')
+
+                # Delete all unnecessary files except inputs and locked files.
+                afm.clear()
+        return outputs
 
 
 class ImportFrom(Builder):
@@ -49,7 +87,7 @@ class ExportTo(Builder):
 
 class Residual(Builder):
     def __init__(self, *builders: Builder):
-        self.builder = (BuildPipeline(*builders) if len(builders) > 1
+        self.builder = (Sequential(*builders) if len(builders) > 1
                         else builders[0])
 
     def build(self, afm: AuxiliaryFileManager, *inputs: AuxiliaryFile
@@ -67,7 +105,7 @@ class StackOutputs(Builder):
                 if len(builders) == 1:
                     self.builders.append(builders[0])
                 else:
-                    self.builders.append(BuildPipeline(*builders))
+                    self.builders.append(Sequential(*builders))
             else:
                 self.builders.append(builders)
 

@@ -1,7 +1,7 @@
 import argparse
 import importlib
 from langumo.configuration import BuildConfig
-from langumo.building import (BuildPipeline, ImportFrom, ExportTo,
+from langumo.building import (Sequential, ImportFrom, ExportTo,
                               StackOutputs, Parser, ParseRawFile, MergeFiles,
                               ShuffleLines, Residual, TrainTokenizer,
                               TokenizeSentences, SplitValidation)
@@ -22,7 +22,7 @@ def _main():
     args = parser.parse_args()
 
     cfg = BuildConfig(args.config)
-    BuildPipeline(
+    Sequential(
         StackOutputs((
             ImportFrom(arg['path']),
             ParseRawFile(_create_parser(arg['parser']),

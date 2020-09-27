@@ -27,7 +27,7 @@ setup(
         'colorama',
         'pyyaml>=5.3.1',
         'tqdm>=4.46.0',
-        'tokenizers>=0.8.0',
+        'tokenizers==0.8.1',
         'mwparserfromhell>=0.5.4',
         'kss==1.3.1'
     ],

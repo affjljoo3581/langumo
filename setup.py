@@ -16,7 +16,7 @@ setup(
 
     keywords=['langumo', 'corpus', 'dataset', 'nlp', 'language-model',
               'deep-learning', 'machine-learning'],
-    url='https://github.com/affjljoo3581/Expanda',
+    url='https://github.com/affjljoo3581/langumo',
     license='Apache-2.0',
 
     package_dir={'': 'src'},

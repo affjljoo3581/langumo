@@ -23,7 +23,7 @@ class SplitValidation(Builder):
 
         total_lines = self._total_lines_in_file(corpus)
         print(colorful.render(f'<r>[*]</r> split validation corpus - '
-                              f'<m>{math.ceil(total_lines * self.val_ratio)} '
+                              f'<m>{math.ceil(total_lines * self.val_ratio)}'
                               f'</m> of <m>{total_lines}</m> lines'))
 
         with corpus.open('rb') as src, train_dataset.open('wb') as tdst, \

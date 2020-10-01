@@ -1,3 +1,16 @@
+"""
+Tokenize into subwords
+^^^^^^^^^^^^^^^^^^^^^^
+
+Recently, NLP models use subword-tokenization for embedding texts to vectors.
+**One-hot encoding** needs too many embedding vectors in lookup table and
+**character-level embedding** brings worse performance. ``langumo`` trains a
+subword tokenizer and encodes the corpora into subword tokens.
+
+.. autoclass:: TrainTokenizer
+.. autoclass:: TokenizeSentences
+"""
+
 import os
 import tqdm
 from tokenizers import Tokenizer
@@ -15,6 +28,16 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'true'
 
 
 class TrainTokenizer(Builder):
+    """Train **WordPiece** tokenizer.
+
+    Args:
+        vocab_size: number of subwords in vocabulary.
+        subset_size: size of subset which is a part of dataset for training the
+            tokenizer.
+        limit_alphabet: maximum different characters to keep in the alphabet.
+        unk_token: unknown token name.
+        special_tokens: list of special token names.
+    """
     def __init__(self,
                  vocab_size: int = 32000,
                  subset_size: int = 512000000,
@@ -75,6 +98,13 @@ class TrainTokenizer(Builder):
 
 
 class TokenizeSentences(Builder):
+    """Tokenize sentences into subwords with trained **WordPiece** tokenizer.
+
+    Args:
+        unk_token: unknown token name.
+        special_tokens: list of special token names.
+        batch_size: encode batch size to tokenize at once.
+    """
     def __init__(self,
                  unk_token: str,
                  special_tokens: List[str] = [],

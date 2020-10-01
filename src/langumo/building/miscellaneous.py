@@ -1,3 +1,18 @@
+"""
+Miscellaneous Builders
+^^^^^^^^^^^^^^^^^^^^^^
+
+``langumo`` provides a few miscellaneous builders to help constructing the
+build pipeline simply. They are not the main implementation of corpus building,
+but necessary to compose the pipeline.
+
+.. autoclass:: Sequential
+.. autoclass:: ImportFrom
+.. autoclass:: ExportTo
+.. autoclass:: Residual
+.. autoclass:: StackOutputs
+"""
+
 import os
 import shutil
 from langumo.building import Builder
@@ -6,6 +21,11 @@ from typing import Union, Tuple, Iterable
 
 
 class Sequential(Builder):
+    """A sequential container of builders.
+
+    The builders in this container have same auxiliary level. The build outputs
+    from each builder will be passed to the next build layer.
+    """
     def __init__(self, *builders: Builder):
         self.builders = builders
 
@@ -44,6 +64,22 @@ class Sequential(Builder):
 
 
 class ImportFrom(Builder):
+    """Import external files to auxiliary environment.
+
+    This builder imports external files to the auxiliary environment to use in
+    other builders. It builds nothing but simply wraps the external files with
+    :class:`AuxiliaryFile <langumo.utils.auxiliary.AuxiliaryFile>` and returns
+    them for passing to next layers.
+
+    Note:
+        The imported auxiliary files are not managed by
+        :class:`AuxiliaryFileManager
+        <langumo.utils.auxiliary.AuxiliaryFileManager>` to prevent from being
+        removed by automatically clean-up.
+
+    Args:
+        paths: import file paths.
+    """
     def __init__(self, *paths: str):
         self.paths = paths
 
@@ -62,6 +98,20 @@ class ImportFrom(Builder):
 
 
 class ExportTo(Builder):
+    """Export auxiliary files to external workspace.
+
+    After building somethings, the output auxiliary files would be removed by
+    :class:`AuxiliaryFileManager
+    <langumo.utils.auxiliary.AuxiliaryFileManager>` 's clean-up. This builder
+    exports the output files to the given external paths and returns the given
+    auxiliary files identically.
+
+    Note:
+        The auxiliary files will be copied to the given export file paths.
+
+    Args:
+        paths: export file paths.
+    """
     def __init__(self, *paths: str):
         self.paths = paths
 
@@ -86,6 +136,13 @@ class ExportTo(Builder):
 
 
 class Residual(Builder):
+    """Concatenate the inputs with outputs from sequential layers.
+
+    The given sequential layers are wrapped with :class:`Sequential`
+    internally. Due to the reason, the auxiliary level in the builders may be
+    increased. This builder returns the given inputs and the outputs from the
+    sequential layers.
+    """
     def __init__(self, *builders: Builder):
         self.builder = (Sequential(*builders) if len(builders) > 1
                         else builders[0])
@@ -97,6 +154,16 @@ class Residual(Builder):
 
 
 class StackOutputs(Builder):
+    """Stack the outputs from the build layers.
+
+    While :class:`Sequential` runs builders by chaining the inputs and their
+    outputs, this builder runs them in parallel -- each builder would take the
+    same input files which is given to this builder -- and returns the stack of
+    the outputs.
+
+    Args:
+        builder_group: an iterator of builders or builder sequences.
+    """
     def __init__(self,
                  builder_group: Iterable[Union[Builder, Tuple[Builder, ...]]]):
         self.builders = []

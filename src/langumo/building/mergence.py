@@ -1,8 +1,26 @@
+"""
+Mergence
+^^^^^^^^
+
+All parsed plain text files should be merged into a single file to handle them
+as an unified large corpus data.
+
+.. autoclass:: MergeFiles
+"""
+
 from langumo.building import Builder
 from langumo.utils import AuxiliaryFile, AuxiliaryFileManager, colorful
 
 
 class MergeFiles(Builder):
+    """Merge files into a single one.
+
+    Note:
+        All documents are separated by new-line character(``\\n``) and this
+        builder automatically appends the new-line character to avoid mixing
+        the last document of a file and the first document of another one.
+    """
+
     def build(self, afm: AuxiliaryFileManager, *inputs: AuxiliaryFile
               ) -> AuxiliaryFile:
         merged = afm.create()

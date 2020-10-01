@@ -1,3 +1,14 @@
+"""
+Parse corpus files
+^^^^^^^^^^^^^^^^^^
+
+Every corpora have their own formats to store data in files. ``langumo`` only
+needs the contents in the files to build unified corpus dataset. Parsing the
+raw-formats and extracting plain texts from the files are necessary.
+
+.. autoclass:: ParseRawFile
+"""
+
 from multiprocessing import Process, Queue
 from langumo.building import Builder
 from langumo.utils import (AuxiliaryFile, AuxiliaryFileManager, colorful,
@@ -6,19 +17,73 @@ from typing import Iterable
 
 
 class Parser:
+    """Abstract base class for parsing raw-formatted corpus."""
+
     def prepare(self, raw: AuxiliaryFile):
+        """Read informations before extracting and parsing.
+
+        While :meth:`parse <parse>` methods are executed in different
+        processes, they cannot get informations about the corpus file from
+        :meth:`extract <extract>`. This method is called before creating the
+        processes, so the required informations collected from this method will
+        be copied to the :meth:`parse <parse>` processes, and hence, they can
+        use the informations in parsing.
+
+        Args:
+            raw: input raw-formatted corpus file.
+        """
         pass
 
     def extract(self, raw: AuxiliaryFile) -> Iterable[str]:
+        """Extract documents from corpus file.
+
+        Note:
+            This method must be implemented.
+
+        Args:
+            raw: input raw-formatted corpus file.
+
+        Yields:
+            raw-formatted documents extracted from the file.
+        """
         raise NotImplementedError('this method must be implemented by '
                                   'inheritor.')
 
     def parse(self, text: str) -> str:
+        """Parse raw-formatted document to plain text.
+
+        To improve parsing performance, this methods will be called in
+        parallel (by creating multi-processes). So if some prior informations
+        about corpus are required, use :meth:`prepare <prepare>`.
+
+        Note:
+            This method must be implemented.
+
+        Args:
+            text: raw-formatted documents extracted from
+                :meth:`extract <extract>`.
+
+        Returns:
+            parsed plain text.
+
+        """
         raise NotImplementedError('this method must be implemented by '
                                   'inheritor.')
 
 
 class ParseRawFile(Builder):
+    """A builder for parsing raw-formatted corpus files.
+
+    Args:
+        parser: an implementation of raw-formatted corpus parser.
+        lang: language code of the target corpus dataset.
+        min_len: minimum length of each document.
+        max_len: maximum length of each document.
+        newline: newline token which is used for replacing the line-break
+            characters.
+        num_workers: number of worker processes which runs
+            :meth:`parse <langumo.building.Parser.parse>`
+    """
     def __init__(self,
                  parser: Parser,
                  lang: str,

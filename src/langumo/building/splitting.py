@@ -1,3 +1,14 @@
+"""
+Splitting
+^^^^^^^^^
+
+Divide an evaluation dataset from the whole corpus dataset. It is necessary to
+evaluate the model by predicting unseen data. ``langumo`` creates isolated
+evaluation dataset for evaluation.
+
+.. autoclass:: SplitValidation
+"""
+
 import math
 import shutil
 from langumo.building import Builder
@@ -6,6 +17,11 @@ from typing import Tuple
 
 
 class SplitValidation(Builder):
+    """Split text file into training and evaluation datasets.
+
+    Args:
+        val_ratio: ratio of evaluation dataset to train dataset.
+    """
     def __init__(self, val_ratio: float = 0.1):
         self.val_ratio = val_ratio
 

@@ -1,3 +1,18 @@
+"""
+Escaped JSON-Style String
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In `json`_ package, :func:`json.encoder.encode_basestring` encodes a Python
+string to a JSON-style representation. Especially line-break characters are
+escaped to ``\\n``. It helps to separate documents which consists of multi-line
+paragraphs by line-break delimiter.
+
+.. _json: https://docs.python.org/3/library/json.html
+
+.. autoclass:: EscapedStringParser
+    :show-inheritance:
+"""
+
 import re
 import json
 from langumo.building import Parser
@@ -6,6 +21,12 @@ from typing import Iterable
 
 
 class EscapedStringParser(Parser):
+    """Escaped JSON-Style String Parser.
+
+    This parser normalizes the contents by removing duplicated spaces, empty
+    lines and replacing irregular quotes to normal ones ('' and "").
+    """
+
     single_quotes_pattern = re.compile('[\x60\xb4\u2018\u2019]')
     double_quotes_pattern = re.compile('[\u201c\u201d]')
 

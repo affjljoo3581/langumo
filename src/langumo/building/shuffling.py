@@ -1,3 +1,17 @@
+"""
+Shuffling text file
+^^^^^^^^^^^^^^^^^^^
+
+Commonly, deep learning models are trained with mini-batches from whole
+dataset. Theoretically, the mini-batches should be sampled from the data
+distribution. However, they are usually gathered sequentially fetched from the
+dataset. So the randomness of the dataset is important. Therefore, after
+collecting plain texts from corpora, it is necessary to shuffle the documents
+to ensure randomness of mini-batches.
+
+.. autoclass:: ShuffleLines
+"""
+
 import tqdm
 import random
 import shutil
@@ -7,6 +21,18 @@ from typing import List
 
 
 class ShuffleLines(Builder):
+    """Shuffle lines in text file approximately.
+
+    Common shuffling algorithms provide perfect randomness in shuffling but
+    they consume a lot of memory while shuffling large files. Shuffling
+    extremely large corpora perfectly is almost impossible. This builder is
+    designed to shuffle immensely large file with lower memory usage and
+    ensuring almost-perfect randomness by approximating a shuffling.
+
+    Args:
+        best_seek_cnt: maximum number of seek count.
+        max_buckets: maximum number of temporary bucket files.
+    """
     def __init__(self, best_seek_cnt: int = 100000, max_buckets: int = 512):
         self.best_seek_cnt = best_seek_cnt
         self.max_buckets = max_buckets

@@ -1,3 +1,11 @@
+"""
+Wikipedia
+^^^^^^^^^
+
+.. autoclass:: WikipediaParser
+    :show-inheritance:
+"""
+
 import re
 import bz2
 import mwparserfromhell as mw
@@ -8,6 +16,21 @@ from typing import Iterable
 
 
 class WikipediaParser(Parser):
+    """Wikipedia dump file parser.
+
+    This parser use `mwparserfromhell`_ library to parse **MediaWiki**
+    contents. To normalize contents, the belows will be removed.
+
+    * Wikilinks
+    * Templates
+    * HTML tags (reference, table)
+    * Texts wrapped with parenthesis
+    * Paragraphs which does not end with punctuations
+
+    Moreover, all irregular quotes will be replaced to normal ones ('' and "").
+
+    .. _mwparserfromhell: https://pypi.org/project/mwparserfromhell/
+    """
     brackets_pattern = re.compile(r'\([^(]*?\)')
     single_quotes_pattern = re.compile('[\x60\xb4\u2018\u2019]')
     double_quotes_pattern = re.compile('[\u201c\u201d]')

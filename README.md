@@ -2,6 +2,7 @@
 **The unified corpus building environment for Language Models.**
 
 ![build](https://github.com/affjljoo3581/langumo/workflows/build/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/langumo/badge/?version=latest)](https://langumo.readthedocs.io/en/latest/?badge=latest)
 ![PyPI](https://img.shields.io/pypi/v/langumo)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/langumo)
 ![PyPI - Format](https://img.shields.io/pypi/format/langumo)<br/>
@@ -20,6 +21,7 @@
     * [From source](#from-source)
 * [Quick start guide](#quick-start-guide)
 * [Usage](#usage)
+* [Documentation](#documentation)
 * [License](#license)
 
 ## Introduction
@@ -149,6 +151,10 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
+
+## Documentation
+You can find the `langumo` documentation
+[on the website](https://langumo.readthedocs.io/en/latest/).
 
 ## License
 `langumo` is [Apache-2.0 Licensed](./LICENSE).

@@ -138,7 +138,6 @@ After building the dataset, `workspace` would contain the below files:
 
 ## Usage
 
-### Command-line usage
 ```
 usage: langumo [-h] [config]
 
